@@ -1,4 +1,4 @@
-package south.utilities;
+package com.frey.south.utilities;
 
 import java.io.File;
 import java.io.IOException;

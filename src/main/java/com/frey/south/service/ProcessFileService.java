@@ -3,75 +3,39 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package south.service;
+package com.frey.south.service;
 
+import com.frey.south.cache.SalesCache;
+import com.frey.south.orm.Client;
+import com.frey.south.orm.Item;
+import com.frey.south.orm.Resume;
+import com.frey.south.orm.Sale;
+import com.frey.south.orm.Salesman;
+import com.frey.south.schedule.ReadFileSchedule;
+import com.frey.south.utilities.EDataType;
+import com.frey.south.utilities.Utilities;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
-import south.cache.SalesCache;
-import south.orm.Client;
-import south.orm.Item;
-import south.orm.Resume;
-import south.orm.Sale;
-import south.orm.Salesman;
-import south.utilities.EDataType;
-import south.utilities.Utilities;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author rodrigo
  */
-public class ProcessFiles {
+@Component
+public class ProcessFileService {
 
-    private SalesCache cache = new SalesCache();
+    @Autowired
+    private SalesCache cache;
 
-    public ProcessFiles() {
-
-        File[] listFiles = Utilities.getFiles();
-
-        for (File file : listFiles) {
-            if (file.getName().endsWith(Utilities.EXTENSION_ACCEPTED)) {
-                try {
-
-                    Path path = Paths.get(Utilities.inDir(), file.getName());
-
-                    Stream<String> lines = Files.lines(path);
-
-                    lines
-                            .filter(l -> !Utilities.isEmpty(l))
-                            .forEach(line -> {
-                                if (line.startsWith(EDataType.SALESMAN.getId())) {
-                                    readSalesman(line);
-                                } else if (line.startsWith(EDataType.CLIENT.getId())) {
-                                    readClient(line);
-                                } else if (line.startsWith(EDataType.SALE.getId())) {
-                                    readSale(line);
-                                } else {
-                                    messageError(line);
-                                }
-                            }
-                            );
-                    Resume res = processResume();
-                    printResults(file.getName(), res);
-
-                } catch (IOException ex) {
-                    Logger.getLogger(ProcessFiles.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            }
-        }
-
-    }
-
-    private Resume processResume() {
+    public Resume processResume() {
         Resume res = new Resume();
         res.setQttClient(cache.getClients().size());
         res.setQttSalesman(cache.getSellers().size());
@@ -83,7 +47,7 @@ public class ProcessFiles {
         });
 
         cache.getSellers().forEach((k, v) -> {
-            if (res.getWorstSeller()== null || res.getWorstSeller().getTotalSold()< v.getTotalSold()) {
+            if (res.getWorstSeller() == null || res.getWorstSeller().getTotalSold() < v.getTotalSold()) {
                 res.setWorstSeller(v);
             }
         });
@@ -91,7 +55,7 @@ public class ProcessFiles {
         return res;
     }
 
-    private void printResults(String inFileName, Resume resume) throws IOException {
+    public void printResults(String inFileName, Resume resume) throws IOException {
 
         String outFileName = inFileName.replace(Utilities.EXTENSION_ACCEPTED, "") + ".done.dat";
 
@@ -105,16 +69,16 @@ public class ProcessFiles {
             bw.newLine();
             bw.write("Quantidade de vendedores: " + resume.getQttSalesman());
             bw.newLine();
-            bw.write("Venda mais cara: {id = " + resume.getExpensiveSale().getId() +", valor = "+resume.getExpensiveSale().getTotalPrice()+"}");
+            bw.write("Venda mais cara: {id = " + resume.getExpensiveSale().getId() + ", valor = " + resume.getExpensiveSale().getTotalPrice() + "}");
             bw.newLine();
-            bw.write("Pior vendedor : {Nome = " + resume.getWorstSeller().getName()+ ", valor = " + resume.getWorstSeller().getTotalSold()+ "}");
+            bw.write("Pior vendedor : {Nome = " + resume.getWorstSeller().getName() + ", valor = " + resume.getWorstSeller().getTotalSold() + "}");
 
             bw.close();
 
         }
     }
 
-    private void readSalesman(String line) {
+    public void readSalesman(String line) {
         String[] fields = getFields(line, EDataType.SALESMAN);
         if (fields != null) {
             Salesman sal = new Salesman();
@@ -125,7 +89,7 @@ public class ProcessFiles {
         }
     }
 
-    private void readSale(String line) {
+    public void readSale(String line) {
         String[] fields = getFields(line, EDataType.SALE);
         if (fields != null) {
             Sale sale = new Sale();
@@ -147,10 +111,10 @@ public class ProcessFiles {
                     sale.getItems().add(item);
 
                     sale.setTotalPrice(sale.getTotalPrice() + item.getPrice());
-                    if (sale.getSalesman() ==null) {
+                    if (sale.getSalesman() == null) {
                         System.out.println("salesma null");
                     }
-                    if (sale.getSalesman().getTotalSold()==null) {
+                    if (sale.getSalesman().getTotalSold() == null) {
                         System.out.println(sale.getSalesman().getCnpjCpf());
                         System.out.println(sale.getSalesman().getName());
                         System.out.println(sale.getSalesman().getSalary());
@@ -158,7 +122,7 @@ public class ProcessFiles {
                         System.out.println("sold null");
                     }
                     sale.getSalesman().setTotalSold(sale.getSalesman().getTotalSold() + item.getPrice());
-                    
+
                     cache.putSalesman(sale.getSalesman());
 
                 }
@@ -167,7 +131,7 @@ public class ProcessFiles {
         }
     }
 
-    private void readClient(String line) {
+    public void readClient(String line) {
         String[] fields = getFields(line, EDataType.CLIENT);
         if (fields != null) {
             if (fields != null) {
@@ -185,15 +149,11 @@ public class ProcessFiles {
         String[] fields = line.split(type.getSeparator());
 
         if (type.getLength() > 0 && type.getLength() != fields.length) {
-            messageError(line);
+            Logger.getLogger(ProcessFileService.class.getName()).log(Level.INFO, "Linha fora do padrão especificado:  " + line);
             return null;
         }
 
         return fields;
-    }
-
-    private void messageError(String line) {
-        Logger.getLogger(ProcessFiles.class.getName()).log(Level.INFO, "Linha fora do padrão especificado:  " + line);
     }
 
 }

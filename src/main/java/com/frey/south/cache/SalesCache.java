@@ -3,18 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package south.cache;
+package com.frey.south.cache;
 
+import com.frey.south.orm.Client;
+import com.frey.south.orm.Sale;
+import com.frey.south.orm.Salesman;
 import java.util.HashMap;
 import java.util.Map;
-import south.orm.Client;
-import south.orm.Sale;
-import south.orm.Salesman;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author rodrigo
  */
+@Component
 public class SalesCache {
 
     private Map<String, Salesman> sellers = new HashMap<>();
