@@ -11,25 +11,35 @@ package south.orm;
  */
 public class Salesman extends Person {
 
-    
     private Double salary;
+    private Double totalSold;
 
     public Salesman() {
         super();
+        this.salary = new Double(0);
+        this.totalSold= new Double(0);
     }
 
-    public Salesman(Double salary, String cnpjCpf, String name) {
+    public Salesman(String cnpjCpf, String name) {
         super(cnpjCpf, name);
-        this.salary = salary;
+        this.salary = new Double(0);
+        this.totalSold= new Double(0);
     }
 
-    
     public Double getSalary() {
         return salary;
     }
 
     public void setSalary(Double salary) {
         this.salary = salary;
+    }
+
+    public Double getTotalSold() {
+        return totalSold;
+    }
+
+    public void setTotalSold(Double totalSold) {
+        this.totalSold = totalSold;
     }
 
 }

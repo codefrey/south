@@ -17,7 +17,13 @@ public class Sale {
     private Long id;
     private List<Item> items;
     private Salesman salesman;
+    private Double totalPrice;
 
+    public Sale() {
+        this.totalPrice = new Double(0);
+    }
+
+    
     public Long getId() {
         return id;
     }
@@ -43,6 +49,14 @@ public class Sale {
 
     public void setSalesman(Salesman salesman) {
         this.salesman = salesman;
+    }
+
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
 }

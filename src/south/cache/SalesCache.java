@@ -5,7 +5,6 @@
  */
 package south.cache;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import south.orm.Client;
@@ -23,11 +22,11 @@ public class SalesCache {
     private Map<Long, Sale> sales = new HashMap<>();
 
     public Salesman getSalesman(String name) {
-
+        name = name.trim();
         if (sellers.containsKey(name)) {
             return sellers.get(name);
         } else {
-            Salesman s = new Salesman(0.00, "", name);
+            Salesman s = new Salesman("", name);
             sellers.put(name, s);
             return s;
         }
@@ -45,11 +44,17 @@ public class SalesCache {
         sales.put(sale.getId(), sale);
     }
 
-    public String getQuantityOfClient() {
-        return "Quantidade de clientes: "+String.valueOf(clients.size());
+    public Map<String, Salesman> getSellers() {
+        return sellers;
     }
 
-    public String getQuantityOfSalesman() {
-        return "Quantidade de vendedores: "+String.valueOf(sellers.size());
+    public Map<String, Client> getClients() {
+        return clients;
     }
+
+    public Map<Long, Sale> getSales() {
+        return sales;
+    }
+    
+    
 }
