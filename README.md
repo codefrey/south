@@ -1,2 +1,0 @@
-# south
-Sales file reader
