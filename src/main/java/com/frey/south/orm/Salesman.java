@@ -11,19 +11,30 @@ package com.frey.south.orm;
  */
 public class Salesman extends Person {
 
+    private boolean sold;
     private Double salary;
     private Double totalSold;
 
     public Salesman() {
         super();
+        this.sold = false;
         this.salary = new Double(0);
-        this.totalSold= new Double(0);
+        this.totalSold = new Double(0);
     }
 
     public Salesman(String cnpjCpf, String name) {
         super(cnpjCpf, name);
+        this.sold = false;
         this.salary = new Double(0);
-        this.totalSold= new Double(0);
+        this.totalSold = new Double(0);
+    }
+
+    public boolean isSold() {
+        return sold;
+    }
+
+    public void setSold(boolean sold) {
+        this.sold = sold;
     }
 
     public Double getSalary() {

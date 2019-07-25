@@ -19,9 +19,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class SalesCache {
 
-    private Map<String, Salesman> sellers = new HashMap<>();
-    private Map<String, Client> clients = new HashMap<>();
-    private Map<Long, Sale> sales = new HashMap<>();
+    private Map<String, Salesman> sellers;
+    private Map<String, Client> clients;
+    private Map<Long, Sale> sales;
+
+    public void cleanCache() {
+        this.sellers = new HashMap<>();
+        this.clients = new HashMap<>();
+        this.sales = new HashMap<>();
+    }
 
     public Salesman getSalesman(String name) {
         name = name.trim();
@@ -57,6 +63,5 @@ public class SalesCache {
     public Map<Long, Sale> getSales() {
         return sales;
     }
-    
-    
+
 }

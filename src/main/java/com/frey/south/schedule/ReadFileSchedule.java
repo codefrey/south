@@ -5,6 +5,7 @@
  */
 package com.frey.south.schedule;
 
+import com.frey.south.cache.SalesCache;
 import com.frey.south.orm.Resume;
 import com.frey.south.service.ProcessFileService;
 import com.frey.south.utilities.EDataType;
@@ -30,6 +31,8 @@ public class ReadFileSchedule {
 
     @Autowired
     private ProcessFileService fileService;
+    @Autowired
+    private SalesCache cache;
 
     @Scheduled(fixedRate = (30 * 1000))
     public void ProcessFiles() {
@@ -37,9 +40,10 @@ public class ReadFileSchedule {
         File[] listFiles = Utilities.getFiles();
 
         for (File file : listFiles) {
+            cache.cleanCache(); 
             if (file.getName().endsWith(Utilities.EXTENSION_ACCEPTED)) {
                 try {
-
+                    
                     Path path = Paths.get(Utilities.inDir(), file.getName());
 
                     Stream<String> lines = Files.lines(path);
